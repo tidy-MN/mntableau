@@ -15,6 +15,6 @@ To install `mntableau`:
 # First install the 'remotes' package
 install.packages("remotes")
 
-# Now you can install mncolors from github
+# Now you can install mntableau from github
 remotes::install_github("tidy-MN/mntableau")
 ```
