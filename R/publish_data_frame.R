@@ -46,10 +46,19 @@ publish_data_frame <- function(data,
   tmp <- tempfile(fileext = ".hyper")
   hyper$to_hyper(data, tmp)
 
-  conn$publish_data_source(
-    datasource_file_path = tmp,
-    datasource_name = name,
-    project_id = project_id,
-    datasource_description = datasource_description
+  py$conn <- conn
+  py$tmp <- tmp
+  py$ds_name <- name
+  py$project_id <- project_id
+  py$datasource_description <- datasource_description
+
+  py_eval(
+    "conn$publish_data_source(
+      datasource_file_path = tmp,
+      datasource_name = ds_name,
+      project_id = project_id,
+      datasource_description = datasource_description
+    )
+    "
   )
 }
