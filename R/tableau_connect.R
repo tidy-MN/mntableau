@@ -1,4 +1,4 @@
-#' Open a connection to a MN state Tableau site
+#' Open a server connection to a MN state Tableau site
 #'
 #' Requires reticulate and Python interpreter
 #'
@@ -12,7 +12,7 @@
 #'
 #' keyring::key_set("tableau", "nageld1")
 #'
-#' conn <- tableau_connect("mdh_internal_dev",
+#' server <- tableau_connect("mdh_internal_dev",
 #' username = "nageld1",
 #' password = keyring::key_get("tableau", "nageld1")
 #' )
@@ -38,44 +38,25 @@ tableau_connect <- function(
 
   if(!is.null(username) & !is.null(token_name)) stop('Only provide a username and password or a token, not both')
 
-  py <- reticulate::import_builtins()
-  warnings <- reticulate::import('warnings')
-  TableauServerConnection <- reticulate::import("tableau_api_lib")$TableauServerConnection
+  TSC <- reticulate::import("tableauserverclient")
 
   site <- tableau_sites[tableau_sites$name == site_name, -1]
-
-  credentials <- if(!is.null(username)) list(
+  #use username/password if username is provided
+  tableau_auth <- if(!is.null(username)) TSC$TableauAuth(
     username = username,
-    password = password
-  ) else list(
-    personal_access_token_name = token_name,
-    personal_access_token_secret = token_secret
+    password = password,
+    site_id = site$site_name
+    #use token if no username provided
+  ) else TSC$PersonalAccessTokenAuth(
+    token_name = token_name,
+    personal_access_token = token_secret,
+    site_id = site$site_name
   )
-
-  site <- list(selected_site = c(
-    as.list(site),
-    api_version = '2.4',
-    credentials
-  )
-  )
-
-  #Set connection
-  conn <- TableauServerConnection(site, env = 'selected_site')
-  #API version will be incorrect. Ignore warning.
-  with(warnings$catch_warnings(),
-       {
-         warnings$simplefilter("ignore")
-         conn$sign_in()
-       })
-
-  #Change API version to current
-  site[['selected_site']][['api_version']] <- conn$server_info()$json()[['serverInfo']][['restApiVersion']]
-  #Sign out to sign in again with correct API version
-  conn$sign_out()
-
-  #Sign in again with correct API version
-  conn <- TableauServerConnection(site, env = 'selected_site')
-  conn$sign_in()
-  return(conn)
-
+  
+  server <- TSC$Server(site$server, use_server_version = TRUE)
+  
+  server$auth$sign_in(tableau_auth)
+  
+  return(server)
+  
 }

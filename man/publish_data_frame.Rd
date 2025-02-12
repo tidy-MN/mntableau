@@ -6,7 +6,7 @@
 \usage{
 publish_data_frame(
   data,
-  conn,
+  server,
   name,
   project_name,
   parent_project_name = NULL,
@@ -16,7 +16,7 @@ publish_data_frame(
 \arguments{
 \item{data}{A data frame that can be published as a data source.}
 
-\item{conn}{A Tableau connection object. See `tableau_connect()`.}
+\item{server}{A Tableau server object. See `tableau_connect()`.}
 
 \item{name}{The name of the published data source.}
 
@@ -34,12 +34,12 @@ Requires reticulate and Python interpreter
 
 keyring::key_set("tableau", "nageld1")
 
-conn <- tableau_connect("mdh_internal_dev",
+server <- tableau_connect("mdh_internal_dev",
 username = "nageld1",
 password = keyring::key_get("tableau", "nageld1")
 )
 
-publish_data_frame(tableau_sites, conn,
+publish_data_frame(tableau_sites, server,
 name = "MN Tableau sites",
 project_name = "published_data_sources",
 parent_project_name = "tableau_api_lib testing",

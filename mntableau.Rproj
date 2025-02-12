@@ -1,4 +1,5 @@
 Version: 1.0
+ProjectId: 52248753-1025-493a-bdba-b21291bfff18
 
 RestoreWorkspace: Default
 SaveWorkspace: Default
@@ -11,3 +12,11 @@ Encoding: UTF-8
 
 RnwWeave: Sweave
 LaTeX: pdfLaTeX
+
+BuildType: Package
+PackageUseDevtools: Yes
+PackageInstallArgs: --no-multiarch --with-keep.source
+
+PythonType: system
+PythonVersion: 3.13.1
+PythonPath: C:/Program Files/Python313/python.exe

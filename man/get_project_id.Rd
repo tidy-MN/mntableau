@@ -4,10 +4,10 @@
 \alias{get_project_id}
 \title{Get the project id for a given project name and optional parent project}
 \usage{
-get_project_id(conn, name, parent_name = NULL)
+get_project_id(server, name, parent_name = NULL)
 }
 \arguments{
-\item{conn}{A Tableau connection object. See `tableau_connect()`.}
+\item{server}{A Tableau server object. See `tableau_connect()`.}
 
 \item{name}{The name of the project. Case sensitive.}
 
@@ -21,13 +21,13 @@ Requires reticulate and Python interpreter
 
 keyring::key_set("tableau", "nageld1")
 
-conn <- tableau_connect("mdh_internal_dev",
+server <- tableau_connect("mdh_internal_dev",
 username = "nageld1",
 password = keyring::key_get("tableau", "nageld1")
 )
 
-get_project_id(conn, "MNIT-MDH")
-get_project_id(conn, "Newborn", parent_name = "PHL")
+get_project_id(server, "MNIT-MDH")
+get_project_id(server, "Newborn", parent_name = "PHL")
 }
 
 }

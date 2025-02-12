@@ -21,7 +21,7 @@
 #' get_project_id(conn, "Newborn", parent_name = "PHL")
 #' }
 #'
-#' @export
+#' 
 
 download_workbook <- function(conn, name, file, project_name = NULL, format = NULL) {
 

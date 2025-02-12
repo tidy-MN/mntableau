@@ -2,7 +2,7 @@
 % Please edit documentation in R/tableau_connect.R
 \name{tableau_connect}
 \alias{tableau_connect}
-\title{Open a connection to a MN state Tableau site}
+\title{Open a server connection to a MN state Tableau site}
 \usage{
 tableau_connect(
   site_name,
@@ -31,7 +31,7 @@ Requires reticulate and Python interpreter
 
 keyring::key_set("tableau", "nageld1")
 
-conn <- tableau_connect("mdh_internal_dev",
+server <- tableau_connect("mdh_internal_dev",
 username = "nageld1",
 password = keyring::key_get("tableau", "nageld1")
 )
