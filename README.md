@@ -4,8 +4,9 @@ Use the `mntableau` package to streamline API calls to MN state Tableau servers.
 
 ## Prerequisites
 
-- Python installed with tableau-api-lib and tableauhyperio packages installed
+- Python installed with tableauserverclient and package installed
 - Set Python interpreter in RStudio
+- arrow package is optional but required to use publish_data_frame()
 
 ## Install
 
