@@ -75,7 +75,8 @@ download_view <- function(server, name, file,
   }
 
   for (i in parameters){
-    request_options$parameters(names(i), unname(i))
+    #request_options parameter method doesn't work, using vf does
+    request_options$vf(names(i), unname(i))
   }  
     
   view_item <- server$views$get_by_id(id)
