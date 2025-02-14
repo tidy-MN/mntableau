@@ -6,8 +6,9 @@
 #' @param name The name of the view to download.
 #' @param file The file path to download to. Must have an extension of ".csv", ".png", or ".pdf".
 #' @param workbook_name The name of the workbook that the view is within. Use if other views in the server share the same name. Optional.
-#' @param filters A list of named items each having length 1 where the names represent the names of the fields to be filtered on and the values represent the items to keep. Optional.
-#' @param parameters A list of named items each having length 1 where the names represent the names of the parameters and the values represent the parameter values. Optional.
+#' @param filters A named list of items each having length 1 where the names represent the names of the fields to be filtered on and the values represent the items to keep. Optional.
+#' @param parameters A named list of items each having length 1 where the names represent the names of the parameters and the values represent the parameter values. Optional.
+#' @param options A named list of options to be passed to methods. See `download_options` for a data frame of all options available.
 #' @examples
 #' /dontrun{
 #'
@@ -17,12 +18,19 @@
 #' username = "nageld1",
 #' password = keyring::key_get("tableau", "nageld1")
 #' )
-#'
-#' file <- "C:/Users/nageld1/Downloads/test.pdf"
 #' 
-#' filters <- list(c("Customer Name" = "Aaron Hawkins"))
+#' view_name <- "Health Indicators"
+#' workbook_name <- "World Indicators mntableau"
+#' file <- tempfile(fileext = ".pdf")
+#' filters <- list(c("Region" = "The Americas"))
 #' 
-#' download_view(server, "Subtotals example", file, filters = filters)
+#' download_view(
+#'   server,
+#'   name = view_name,
+#'   file = file,
+#'   workbook_name = workbook_name,
+#'   filters = filters
+#' )
 #' }
 #'
 #' @export
@@ -37,8 +45,8 @@ download_view <- function(server, name, file,
   TSC <- reticulate::import("tableauserverclient")
   
   file_ext <- regmatches(file, regexpr('\\.[^.]+$', file))
-  if (!(file_ext %in% c(".csv", ".png", ".pdf"))) {
-    stop('file must have an extension of .csv, .png, or .pdf')
+  if (!(file_ext %in% c(".csv", ".png", ".pdf", ".xlsx"))) {
+    stop("file must have an extension of .csv, .png, .pdf, or .xlsx")
   }
   
   if (length(filters) > 0) {
@@ -59,16 +67,26 @@ download_view <- function(server, name, file,
   method <- switch(file_ext,
                    ".csv" = "populate_csv",
                    ".png" = "populate_image",
-                   ".pdf" = "populate_pdf"
+                   ".pdf" = "populate_pdf",
+                   ".xlsx" = "populate_excel"
                    )
   
   options_method <- switch(file_ext,
                            ".csv" = "CSVRequestOptions",
                            ".png" = "ImageRequestOptions",
-                           ".pdf" = "PDFRequestOptions"
+                           ".pdf" = "PDFRequestOptions",
+                           ".xlsx" = "ExcelRequestOptions"
   )
   
-  request_options <- TSC[options_method]()
+  write_method <- switch(file_ext,
+                         ".csv" = "csv",
+                         ".png" = "image",
+                         ".pdf" = "pdf",
+                         ".xlsx" = "excel"
+  )
+  
+  #call appropriate TSC options method with options
+  request_options <- do.call(TSC[options_method], options)
   
   for (i in filters){
     request_options$vf(names(i), unname(i))
@@ -82,9 +100,9 @@ download_view <- function(server, name, file,
   view_item <- server$views$get_by_id(id)
   server$views[method](view_item, req_options = request_options)
   
-  #write to file
-  with(reticulate::`%as%`(py$open(file, 'wb'), output), {
-    #remove . from extension for view_item attribute
-    output$write(view_item[sub("\\.", "", file_ext)])
-  })
+  #cast to raw vector
+  raw <- unlist(lapply(py$tuple(view_item[write_method]), as.raw))
+  bin_file <- file(file, "wb")
+  writeBin(raw, bin_file)
+  close(bin_file)
 }

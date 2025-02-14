@@ -27,7 +27,7 @@ publish_data_frame(
 \item{datasource_description}{A string describing the published data source. Optional.}
 }
 \description{
-Requires reticulate and Python interpreter
+Requires arrow package
 }
 \examples{
 /dontrun{
@@ -41,8 +41,8 @@ password = keyring::key_get("tableau", "nageld1")
 
 publish_data_frame(tableau_sites, server,
 name = "MN Tableau sites",
-project_name = "published_data_sources",
-parent_project_name = "tableau_api_lib testing",
+project_name = "mntableau data sources",
+parent_project_name = "Tableau REST API testing",
 datasource_description = "MN state government Tableau site info"
 )
 }

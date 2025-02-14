@@ -1,6 +1,6 @@
 #' Publish a R data frame as a Tableau published data source
 #'
-#' Requires reticulate and Python interpreter
+#' Requires arrow package
 #'
 #' @param data A data frame that can be published as a data source.
 #' @param server A Tableau server object. See `tableau_connect()`.
@@ -20,8 +20,8 @@
 #'
 #' publish_data_frame(tableau_sites, server,
 #' name = "MN Tableau sites",
-#' project_name = "published_data_sources",
-#' parent_project_name = "tableau_api_lib testing",
+#' project_name = "mntableau data sources",
+#' parent_project_name = "Tableau REST API testing",
 #' datasource_description = "MN state government Tableau site info"
 #' )
 #' }
@@ -35,8 +35,12 @@ publish_data_frame <- function(data,
                                parent_project_name = NULL,
                                datasource_description = NULL) {
   
+  if(!any(class(server) == "tableauserverclient.server.server.Server")
+     ) stop("server must be a Tableau server instance")
   if(!is.data.frame(data)) stop("data must be a data frame")
   if(length(name) != 1) stop("name must be length 1")
+  if(length(project_name) != 1) stop("project_name must be length 1")
+  if(length(parent_project_name) > 1) stop("parent_project_name must be length 1")
   if(length(datasource_description) > 1) stop("datasource_description must be length 1")
   
   TSC <- reticulate::import("tableauserverclient")

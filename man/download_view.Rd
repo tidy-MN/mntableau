@@ -23,9 +23,11 @@ download_view(
 
 \item{workbook_name}{The name of the workbook that the view is within. Use if other views in the server share the same name. Optional.}
 
-\item{filters}{A list of named items each having length 1 where the names represent the names of the fields to be filtered on and the values represent the items to keep. Optional.}
+\item{filters}{A named list of items each having length 1 where the names represent the names of the fields to be filtered on and the values represent the items to keep. Optional.}
 
-\item{parameters}{A list of named items each having length 1 where the names represent the names of the parameters and the values represent the parameter values. Optional.}
+\item{parameters}{A named list of items each having length 1 where the names represent the names of the parameters and the values represent the parameter values. Optional.}
+
+\item{options}{A named list of options to be passed to methods. See `download_options` for a data frame of all options available.}
 }
 \description{
 Requires reticulate and Python interpreter
@@ -40,11 +42,18 @@ username = "nageld1",
 password = keyring::key_get("tableau", "nageld1")
 )
 
-file <- "C:/Users/nageld1/Downloads/test.pdf"
+view_name <- "Health Indicators"
+workbook_name <- "World Indicators mntableau"
+file <- tempfile(fileext = ".pdf")
+filters <- list(c("Region" = "The Americas"))
 
-filters <- list(c("Customer Name" = "Aaron Hawkins"))
-
-download_view(server, "Subtotals example", file, filters = filters)
+download_view(
+  server,
+  name = view_name,
+  file = file,
+  workbook_name = workbook_name,
+  filters = filters
+)
 }
 
 }
