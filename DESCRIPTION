@@ -4,7 +4,7 @@ Title: Connect to MN Tableau sites
 Version: 0.2.0
 Author: Derek Nagel <derek.nagel@state.mn.us>
 Maintainer: Derek Nagel <derek.nagel@state.mn.us>
-Description: Use to create a connection to a state of MN Tableau site using tableau_api_lib
+Description: Use to create a connection to a state of MN Tableau site using tableauserverclient
 License:
 Encoding: UTF-8
 LazyData: true
